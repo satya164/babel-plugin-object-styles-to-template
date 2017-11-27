@@ -61,10 +61,14 @@ export default function(babel) {
           let text = '';
 
           const serialize = (styles, indent = '  ') =>
-            styles.forEach(prop => {
+            styles.forEach((prop, i) => {
               if (t.isObjectExpression(prop.value)) {
+                if (i !== 0) {
+                  text += '\n';
+                }
+                
                 if (prop.computed) {
-                  text += `\n\n${indent}`;
+                  text += `\n${indent}`;
                   quasis.push(t.templateElement({ raw: text }));
                   expressions.push(prop.key);
                   text = ' {';
@@ -75,11 +79,11 @@ export default function(babel) {
                     key = prop.key.value;
                   }
 
-                  text += `\n\n${indent}${key} {`;
+                  text += `\n${indent}${key} {`;
                 }
 
-                serialize(prop.value.properties, '    ');
-                text += '\n  }';
+                serialize(prop.value.properties, `${indent}  `);
+                text += `\n${indent}}`;
                 return;
               }
 
