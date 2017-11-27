@@ -1,3 +1,5 @@
+/* @flow */
+
 const dashify = text => text.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 const unitless = {
   animationIterationCount: true,
@@ -45,12 +47,12 @@ const unitless = {
   strokeWidth: true,
 };
 
-export default function(babel) {
+module.exports = function(babel /*: any */) {
   const { types: t } = babel;
 
   return {
     visitor: {
-      CallExpression(path) {
+      CallExpression(path /*: any */) {
         const { callee, arguments: args } = path.node;
 
         if (callee.name === 'css' && args.length === 1) {
@@ -78,6 +80,8 @@ export default function(babel) {
                   text += `\n${indent}`;
                   finalize(prop.key, ' {');
                 } else {
+                  let key;
+
                   if (t.isIdentifier(prop.key)) {
                     key = prop.key.name;
                   } else {
@@ -113,7 +117,7 @@ export default function(babel) {
               ) {
                 let value = prop.value.value;
 
-                if (t.isNumericLiteral(prop.value) && !unitless[key]) {
+                if (t.isNumericLiteral(prop.value) && key && !unitless[key]) {
                   value += 'px';
                 }
 
@@ -138,4 +142,4 @@ export default function(babel) {
       },
     },
   };
-}
+};
