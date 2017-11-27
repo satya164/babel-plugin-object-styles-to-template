@@ -49,7 +49,6 @@ export default function(babel) {
   const { types: t } = babel;
 
   return {
-    name: 'ast-transform', // not required
     visitor: {
       CallExpression(path) {
         const { callee, arguments: args } = path.node;
@@ -60,18 +59,24 @@ export default function(babel) {
 
           let text = '';
 
-          const serialize = (styles, indent = '  ') =>
+          const indentation = '  ';
+          const finalize = (expr, str) => {
+            quasis.push(t.templateElement({ raw: text }));
+            expressions.push(expr);
+            text = str;
+          };
+          const serialize = (styles, level = 1) => {
+            const indent = indentation.repeat(level);
+
             styles.forEach((prop, i) => {
               if (t.isObjectExpression(prop.value)) {
                 if (i !== 0) {
                   text += '\n';
                 }
-                
+
                 if (prop.computed) {
                   text += `\n${indent}`;
-                  quasis.push(t.templateElement({ raw: text }));
-                  expressions.push(prop.key);
-                  text = ' {';
+                  finalize(prop.key, ' {');
                 } else {
                   if (t.isIdentifier(prop.key)) {
                     key = prop.key.name;
@@ -82,7 +87,7 @@ export default function(babel) {
                   text += `\n${indent}${key} {`;
                 }
 
-                serialize(prop.value.properties, `${indent}  `);
+                serialize(prop.value.properties, level + 1);
                 text += `\n${indent}}`;
                 return;
               }
@@ -91,9 +96,7 @@ export default function(babel) {
 
               if (prop.computed) {
                 text += `\n${indent}`;
-                quasis.push(t.templateElement({ raw: text }));
-                expressions.push(prop.key);
-                text = ': ';
+                finalize(prop.key, ': ');
               } else {
                 if (t.isIdentifier(prop.key)) {
                   key = prop.key.name;
@@ -104,20 +107,22 @@ export default function(babel) {
                 text += `\n${indent}${dashify(key)}: `;
               }
 
-              if (t.isStringLiteral(prop.value)) {
-                text += `${prop.value.value};`;
-              } else if (t.isNumericLiteral(prop.value)) {
-                if (unitless[key]) {
-                  text += `${prop.value.value};`;
-                } else {
-                  text += `${prop.value.value}px;`;
+              if (
+                t.isStringLiteral(prop.value) ||
+                t.isNumericLiteral(prop.value)
+              ) {
+                let value = prop.value.value;
+
+                if (t.isNumericLiteral(prop.value) && !unitless[key]) {
+                  value += 'px';
                 }
+
+                text += `${value};`;
               } else {
-                quasis.push(t.templateElement({ raw: text }));
-                expressions.push(prop.value);
-                text = ';';
+                finalize(prop.value, ';');
               }
             });
+          };
 
           serialize(args[0].properties);
           quasis.push(t.templateElement({ raw: `${text}\n` }));
