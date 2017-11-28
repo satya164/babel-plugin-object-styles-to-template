@@ -135,12 +135,15 @@ module.exports = function(babel /*: any */) {
           serialize(args[0].properties);
           quasis.push(t.templateElement({ raw: `${text}\n` }));
 
+          const start = path.node.loc.start;
+
           path.replaceWith(
             t.taggedTemplateExpression(
               t.identifier('css'),
               t.templateLiteral(quasis, expressions)
             )
           );
+          path.node.loc = { start };
           path.requeue();
         }
       },
