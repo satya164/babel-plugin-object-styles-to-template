@@ -42,7 +42,7 @@ const container = css({
 It's transpiled to:
 
 ```js
-const title = css`
+const container = css`
   flex: 1;
   padding: 10px;
   background-color: orange;
