@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
+    "babel-macros": "^1.2.0",
     "babel-plugin-tester": "^5.0.0",
     "dedent": "^0.7.0",
     "eslint": "^4.12.0",
