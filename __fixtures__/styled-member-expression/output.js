@@ -1,5 +1,5 @@
 const FancyButton = styled.button`
   background-color: orange;
-  color: ${colors.blue};
+  color: ${props => props.color};
   margin: ${spacing};
 `;
