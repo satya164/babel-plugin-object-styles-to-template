@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-object-styles-to-template",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Babel plugin to transpile object styles to template literal",
   "main": "index.js",
   "license": "MIT",
