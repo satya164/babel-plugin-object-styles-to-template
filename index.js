@@ -47,7 +47,14 @@ const unitless = {
   strokeWidth: true,
 };
 
-module.exports = function(babel /*: any */) {
+/* ::
+type Options = {
+  css?: boolean,
+  styled?: boolean
+}
+*/
+
+module.exports = function(babel /*: any */, options /* : Options */ = {}) {
   const { types: t } = babel;
 
   return {
@@ -56,7 +63,19 @@ module.exports = function(babel /*: any */) {
         const { callee, arguments: args } = path.node;
 
         if (
-          callee.name === 'css' &&
+          ((options.css !== false &&
+            t.isIdentifier(callee) &&
+            callee.name === 'css') || // Matches `css`
+          (options.styled !== false &&
+            t.isCallExpression(callee) &&
+            t.isIdentifier(callee.callee) &&
+            callee.arguments.length === 1 &&
+            callee.callee.name === 'styled') || // Matches `styled(Button)`
+            (options.styled !== false &&
+              t.isMemberExpression(callee) &&
+              t.isIdentifier(callee.object) &&
+              t.isIdentifier(callee.property) &&
+              callee.object.name === 'styled')) && // Matches `styled.button`
           args.length === 1 &&
           t.isObjectExpression(args[0])
         ) {
@@ -139,7 +158,7 @@ module.exports = function(babel /*: any */) {
 
           path.replaceWith(
             t.taggedTemplateExpression(
-              t.identifier('css'),
+              callee,
               t.templateLiteral(quasis, expressions)
             )
           );

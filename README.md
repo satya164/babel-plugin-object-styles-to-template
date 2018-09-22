@@ -16,9 +16,7 @@ Then include it in your `.babelrc`:
 
 ```json
 {
-  "plugins": [
-    "object-styles-to-template"
-  ]
+  "plugins": ["object-styles-to-template"]
 }
 ```
 
@@ -35,7 +33,7 @@ const container = css({
 
   '&:hover': {
     backgroundColor: 'tomato',
-  }
+  },
 });
 ```
 
@@ -52,4 +50,37 @@ const container = css`
     background-color: tomato;
   }
 `;
+```
+
+The styled components syntax is also supported. So when you write the following:
+
+```js
+const FancyButton = styled(Button)({
+  backgroundColor: 'papayawhip',
+});
+```
+
+It's transpiled to:
+
+```js
+const FancyButton = styled(Button)`
+  background-color: papayawhip;
+`;
+```
+
+## Options
+
+You can selectively enable/disable the tags transpiled by the plugin:
+
+- `css: boolean`: Whether to transpile `css` tags. Default: `true`.
+- `styled: boolean`: Whether to transpile styled components like `styled` tags. Default `true`.
+
+To pass options to the plugin, you can use the following syntax:
+
+```json
+{
+  "plugins": [
+    ["object-styles-to-template", { "css": true, "styled": false }]
+  ]
+}
 ```
