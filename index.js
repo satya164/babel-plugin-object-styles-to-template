@@ -1,6 +1,10 @@
 /* @flow */
 
-const dashify = text => text.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+const hyphenate = s =>
+  // Hyphenate CSS property names from camelCase version from JS string
+  // Special case for `-ms` because in JS it starts with `ms` unlike `Webkit`
+  s.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`).replace(/^ms-/, '-ms-');
+
 const unitless = {
   animationIterationCount: true,
   borderImageOutset: true,
@@ -131,7 +135,7 @@ module.exports = function(babel /*: any */, options /* : Options */ = {}) {
                   key = prop.key.value;
                 }
 
-                text += `\n${indent}${dashify(key)}: `;
+                text += `\n${indent}${hyphenate(key)}: `;
               }
 
               if (
@@ -140,7 +144,17 @@ module.exports = function(babel /*: any */, options /* : Options */ = {}) {
               ) {
                 let value = prop.value.value;
 
-                if (t.isNumericLiteral(prop.value) && key && !unitless[key]) {
+                if (
+                  t.isNumericLiteral(prop.value) &&
+                  key &&
+                  !unitless[
+                    // Strip vendor prefixes when checking if the value is unitless
+                    key.replace(
+                      /^(Webkit|Moz|O|ms)([A-Z])(.+)$/,
+                      (match, p1, p2, p3) => `${p2.toLowerCase()}${p3}`
+                    )
+                  ]
+                ) {
                   value += 'px';
                 }
 
