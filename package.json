@@ -1,11 +1,23 @@
 {
   "name": "babel-plugin-object-styles-to-template",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Babel plugin to transpile object styles to template literal",
   "main": "index.js",
-  "repository": "git@github.com:satya164/linaria-object-styles.git",
-  "author": "Satyajit Sahoo <satyajit.happy@gmail.com>",
   "license": "MIT",
+  "author": "Satyajit Sahoo <satyajit.happy@gmail.com>",
+  "repository": "git@github.com:satya164/babel-plugin-object-styles-to-template.git",
+  "bugs": {
+    "url": "https://github.com/satya164/babel-plugin-object-styles-to-template/issues"
+  },
+  "homepage": "https://github.com/satya164/babel-plugin-object-styles-to-template#readme",
+  "keywords": [
+    "react",
+    "css",
+    "css-in-js",
+    "styled-components",
+    "babel-plugin",
+    "babel"
+  ],
   "scripts": {
     "lint": "eslint .",
     "flow": "flow",

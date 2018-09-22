@@ -2,7 +2,7 @@
 
 Babel plugin to transpile object styles to template literal.
 
-The plugin will convert styles written in object syntax to tagged template literal which libraries like [Linaria](https://github.com/callstack/linaria) can consume.
+The plugin will convert styles written in object syntax to tagged template literal which libraries like [`linaria`](https://github.com/callstack/linaria) and [`styled-components`](https://www.styled-components.com/) can consume.
 
 ## Usage
 
